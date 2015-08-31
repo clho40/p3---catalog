@@ -1,0 +1,12 @@
+<html>
+  <body>
+    <h1>New Menu Item</h1>
+    <form action="{{url_for('newMenuItem',rid=rid)}}" method='POST'>
+      <p>Name</p><input type='text' name='name'></br>
+      <p>Description</p><input type='text' name='desc'></br>
+      <p>Price</p><input type='text' name='price'></br>
+      <p>Course</p><input type='text' name='course'></br>
+      <input type='submit' value='Create'>
+    </form>
+  </body>
+</html>
