@@ -6,8 +6,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
-def NewCatagory(c_name):
-    item = Catagory(name = c_name)
+def NewCatagory(c_name,c_desc):
+    item = Catagory(name = c_name,description=c_desc)
     session.add(item)
     session.commit()
 
@@ -19,9 +19,10 @@ def GetAllCatagory():
     item = session.query(Catagory).all()
     return item
 
-def EditCatagory(cid,c_name):
+def EditCatagory(cid,c_name,c_desc):
     item = session.query(Catagory).filter_by(id=cid).one()
     item.name = c_name
+    item.description = c_desc
     session.add(item)
     session.commit()
 

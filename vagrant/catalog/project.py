@@ -7,6 +7,38 @@ def IndexPage():
     catagories = database_service.GetAllCatagory()
     return render_template('index.html',catagories=catagories)
 
+@app.route('/catagory/new', methods=['GET','POST'])
+def newCatagory():
+    catagories = database_service.GetAllCatagory()
+    if request.method == 'POST':
+        database_service.NewCatagory(request.form['name'],request.form['desc'])
+        flash('New catagory created!')
+        return redirect(url_for('newCatagory',catagories=catagories))
+    else:
+        return render_template('newcatagory.html',catagories=catagories)
+
+@app.route('/catagory/<int:cid>/edit', methods=['GET','POST'])
+def editCatagory(cid):
+    catagories = database_service.GetAllCatagory()
+    if request.method == 'POST':
+        database_service.EditCatagory(cid,request.form['name'],request.form['desc'])
+        flash('Catagory updated!')
+        return redirect(url_for('showProducts',cid=cid))
+    else:
+        sel_catagory = database_service.GetCatagoryByID(cid)
+        return render_template('editcatagory.html',catagories=catagories,sel_catagory=sel_catagory)
+
+@app.route('/catagory/<int:cid>/delete')
+def deleteCatagory(cid):
+    catagories = database_service.GetAllCatagory()
+    if request.method == 'POST':
+        database_service.DeleteCatagory(cid)
+        flash('Catagory deleted!')
+        return redirect(url_for('IndexPage'))
+    else:
+        sel_catagory = database_service.GetCatagoryByID(cid)
+        return render_template('deletecatagory.html',catagories=catagories,sel_catagory=sel_catagory)
+
 @app.route('/catagory/<int:cid>')
 def showProducts(cid):
     catagories = database_service.GetAllCatagory()

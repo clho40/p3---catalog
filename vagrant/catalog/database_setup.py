@@ -14,9 +14,10 @@ class Catagory(Base):
     __tablename__ = 'catagory'
     id = Column(Integer,primary_key = True)
     name = Column(String(250),nullable=False)
+    description = Column(String(250))
     updated_on = Column(DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
     updated_by = Column(String(250),nullable=True)
-    created_on = Column(DateTime,default=datetime.now())
+    created_on = Column(DateTime,default=datetime.datetime.now())
     created_by = Column(String(250),nullable=True)
     
     @property
@@ -37,7 +38,7 @@ class Product(Base):
     catagory = relationship(Catagory)
     updated_on = Column(DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
     updated_by = Column(String(250),nullable=True)
-    created_on = Column(DateTime,default=datetime.now())
+    created_on = Column(DateTime,default=datetime.datetime.now())
     created_by = Column(String(250),nullable=True)
 
     @property

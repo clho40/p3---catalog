@@ -1,7 +1,7 @@
 <html>
   <head>
     <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
-    <title>Supplement Catalog</title>
+    <title>Catalog</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -16,7 +16,7 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="{{url_for('IndexPage')}}">
-                        Supplement Catalog
+                        Catalog
                     </a>
                 </li>
                 <li class="sidebar-brand">
@@ -29,6 +29,9 @@
                     <a href="{{url_for('showProducts',cid=catagory.id)}}">{{catagory.name}}</a>
                 </li>
                 {% endfor %}
+                <li>
+                    <a href="{{url_for('newCatagory')}}">Create new catagory</a>
+                </li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -39,6 +42,18 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
+                        
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-success">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{message}}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                        
                         <h1>Welcome!</h1>
                         <p>Feel free to navigate around! We have the right supplement for you!</p>
                     </div>
