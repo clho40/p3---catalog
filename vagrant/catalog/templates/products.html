@@ -11,7 +11,7 @@
   </head>
   <body>
     <div id="wrapper">
-        <!-- Sidebar -->
+         <!--Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
@@ -32,6 +32,9 @@
                 <li>
                     <a href="{{url_for('newCatagory')}}">Create new catagory</a>
                 </li>
+                <li>
+                    <a href="{{url_for('newProduct')}}">Create new product</a>
+                </li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -41,10 +44,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        {% with messages = get_flashed_messages() %}
+                        {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-success">
+                        {% for category,message in messages %}
+                        <div class="alert {{ category }}">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>{{message}}</strong>
                         </div>
@@ -57,9 +60,30 @@
                             <a href="{{url_for('editCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Edit</a>
                             <a href="{{url_for('deleteCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Delete</a>
                         </div>
-                        <ul>
+                        <ul class="list-group">
                             {% for product in products %}
-                            <li>{{product.name}}</li>
+                            <li style="list-style: none;">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div style="float:left;margin: 0 10px; width:300px;">
+                                            <p><strong>{{product.name}}</strong></p>
+                                            <p>{{product.description}}</p>
+                                        </div>
+                                        <div style="float:left;margin: 0 10px; width:100px;">
+                                            <p><strong>Price</strong></p>
+                                            <p>{{product.price}}</p>
+                                        </div>
+                                        <div style="float:left;margin: 0 10px; width:100px;">
+                                            <p><strong>Flavour</strong></p>
+                                            <p>{{product.flavour}}</p>
+                                        </div>
+                                        <div style="float:left;margin: 0 10px;">
+                                            <a href="{{url_for('editProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Edit</a>
+                                            <a href="{{url_for('deleteProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>

@@ -1,7 +1,7 @@
 <html>
   <head>
     <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
-    <title>New Catalog</title>
+    <title>Edit Catalog</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -58,24 +58,47 @@
                         {% endwith %}
                         
                         <div class="jumbotron">
-                            <h1>New Catagory</h1>
+                            <h1>Edit Product</h1>
                         </div>
-                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('newCatagory')}}">
+                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('editProduct',cid=sel_catagory.id, pid=sel_product.id)}}">
                             <div class="form-group">
-                                <label class="control-label col-sm-2" for="name">Catagory Name: </label>
+                                <label class="control-label col-sm-2" for="name">Product Name: </label>
                                 <div class="col-sm-10">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter catagory name">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" value="{{sel_product.name}}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="desc">Description: </label>
                                 <div class="col-sm-10"> 
-                                <textarea class="form-control" rows="5" id="desc" name="desc" placeholder="Enter description"></textarea>
+                                <textarea class="form-control" rows="5" id="desc" name="desc" placeholder="Enter description">{{sel_product.description}}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="price">Price: </label>
+                                <div class="col-sm-10">
+                                <input type="text" class="form-control" id="price" name="price" placeholder="Enter product price" value="{{sel_product.price}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="flavour">Flavour: </label>
+                                <div class="col-sm-10">
+                                <input type="text" class="form-control" id="flavour" name="flavour" placeholder="Enter product flavour" value="{{sel_product.flavour}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Catagory: </label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="catagory">
+                                        {% for catagory in catagories %}
+                                        <option value="{{catagory.id}}">{{catagory.name}}</option>
+                                        {% endfor %}
+                                    </select>                                    
                                 </div>
                             </div>
                             <div class="form-group"> 
                                 <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Submit</button>
+                                <button type="submit" class="btn btn-default">Update</button>
+                                <a href="{{url_for('showProducts',cid=sel_catagory.id)}}" class="btn btn-default">Cancel</a>
                                 </div>
                             </div>
                         </form>

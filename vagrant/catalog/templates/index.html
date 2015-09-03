@@ -8,10 +8,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='simple-sidebar.css')}}">
+    
   </head>
   <body>
     <div id="wrapper">
-        <!-- Sidebar -->
+         <!--Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
@@ -32,21 +33,26 @@
                 <li>
                     <a href="{{url_for('newCatagory')}}">Create new catagory</a>
                 </li>
+                <li>
+                    <a href="{{url_for('newProduct')}}">Create new product</a>
+                </li>
             </ul>
         </div>
+        <div id="divsidebar">
+            
+        </div>
         <!-- /#sidebar-wrapper -->
-
+        
         <!-- Page Content -->
         <div id="page-content-wrapper">
           
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        
-                        {% with messages = get_flashed_messages() %}
+                        {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-success">
+                        {% for category,message in messages %}
+                        <div class="alert {{ category }}">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>{{message}}</strong>
                         </div>
@@ -65,4 +71,11 @@
     <!-- /#wrapper -->
     
   </body>
+  <!--<script>
+        $(document).ready(function() {
+            $('#divsidebar').load("{{url_for('sidebar')}}",function (responseText, textStatus, xhr) {
+                alert(textStatus);
+            });
+        });
+    </script>-->
 </html>

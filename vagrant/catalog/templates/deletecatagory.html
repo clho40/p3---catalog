@@ -11,7 +11,7 @@
   </head>
   <body>
       <div id="wrapper">
-        <!-- Sidebar -->
+         <!--Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
@@ -31,6 +31,9 @@
                 {% endfor %}
                 <li>
                     <a href="{{url_for('newCatagory')}}">Create new catagory</a>
+                </li>
+                <li>
+                    <a href="{{url_for('newProduct')}}">Create new product</a>
                 </li>
             </ul>
         </div>
@@ -57,9 +60,8 @@
                         <div class="jumbotron">
                             <h1>Delete Catagory</h1>
                         </div>
-                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('editCatagory',cid=sel_catagory.id)}}">
-                            <div class="form-group"> 
-                                
+                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('deleteCatagory',cid=sel_catagory.id)}}">
+                            <div class="form-group">
                                 <!--<div class="col-sm-offset-2 col-sm-10">-->
                                 <label class="control-label col-sm-2">Confirm delete catagory <span style="color:#FF0000;">{{sel_catagory.name}}</span> ?</label>
                                 <button type="submit" class="btn btn-default">Yes</button>
