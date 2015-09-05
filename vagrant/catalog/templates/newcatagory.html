@@ -1,93 +1,25 @@
-<html>
-  <head>
-    <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
-    <title>New Catalog</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='simple-sidebar.css')}}">
-  </head>
-  <body>
-      <div id="wrapper">
-         <!--Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Catalog
-                    </a>
-                </li>
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Login
-                    </a>
-                </li>
-                {% for catagory in catagories %}
-                <li>
-                    <a href="{{url_for('showProducts',cid=catagory.id)}}">{{catagory.name}}</a>
-                </li>
-                {% endfor %}
-                <li>
-                    <a href="{{url_for('newCatagory')}}">Create new catagory</a>
-                </li>
-                <li>
-                    <a href="{{url_for('newProduct')}}">Create new product</a>
-                </li>
-            </ul>
+{% extends "base.html" %}
+{% block content %} 
+<div class="jumbotron">
+<h1>New Catagory</h1>
+</div>
+<form class="form-horizontal" role="form" method="POST" action="{{url_for('newCatagory')}}">
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="name">Catagory Name: </label>
+        <div class="col-sm-10">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter catagory name">
         </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-          
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                        {% for category,message in messages %}
-                        <div class="alert {{ category }}">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>{{message}}</strong>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        
-                        <div class="jumbotron">
-                            <h1>New Catagory</h1>
-                        </div>
-                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('newCatagory')}}">
-                            <div class="form-group">
-                                <label class="control-label col-sm-2" for="name">Catagory Name: </label>
-                                <div class="col-sm-10">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter catagory name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2" for="desc">Description: </label>
-                                <div class="col-sm-10"> 
-                                <textarea class="form-control" rows="5" id="desc" name="desc" placeholder="Enter description"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group"> 
-                                <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Submit</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /#page-content-wrapper -->
     </div>
-    <!-- /#wrapper -->
-    <div class="container">
-        
-    </div>  
-  </body>
-</html>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="desc">Description: </label>
+        <div class="col-sm-10"> 
+        <textarea class="form-control" rows="5" id="desc" name="desc" placeholder="Enter description"></textarea>
+        </div>
+    </div>
+    <div class="form-group"> 
+        <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

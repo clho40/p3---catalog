@@ -1,98 +1,46 @@
-<html>
-  <head>
-    <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
-    <title>Catalog</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='simple-sidebar.css')}}">
-  </head>
-  <body>
-    <div id="wrapper">
-         <!--Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Catalog
-                    </a>
-                </li>
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Login
-                    </a>
-                </li>
-                {% for catagory in catagories %}
-                <li>
-                    <a href="{{url_for('showProducts',cid=catagory.id)}}">{{catagory.name}}</a>
-                </li>
-                {% endfor %}
-                <li>
-                    <a href="{{url_for('newCatagory')}}">Create new catagory</a>
-                </li>
-                <li>
-                    <a href="{{url_for('newProduct')}}">Create new product</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                        {% for category,message in messages %}
-                        <div class="alert {{ category }}">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>{{message}}</strong>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        <div class="jumbotron">
-                            <h1>{{sel_catagory.name}}</h1>
-                            <p>{{sel_catagory.description}}</p>
-                            <a href="{{url_for('editCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Edit</a>
-                            <a href="{{url_for('deleteCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Delete</a>
-                        </div>
-                        <ul class="list-group">
-                            {% for product in products %}
-                            <li style="list-style: none;">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div style="float:left;margin: 0 10px; width:300px;">
-                                            <p><strong>{{product.name}}</strong></p>
-                                            <p>{{product.description}}</p>
-                                        </div>
-                                        <div style="float:left;margin: 0 10px; width:100px;">
-                                            <p><strong>Price</strong></p>
-                                            <p>{{product.price}}</p>
-                                        </div>
-                                        <div style="float:left;margin: 0 10px; width:100px;">
-                                            <p><strong>Flavour</strong></p>
-                                            <p>{{product.flavour}}</p>
-                                        </div>
-                                        <div style="float:left;margin: 0 10px;">
-                                            <a href="{{url_for('editProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Edit</a>
-                                            <a href="{{url_for('deleteProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+{% extends "base.html" %}
+{% block content %} 
+<div class="jumbotron">
+    <h1>{{sel_catagory.name}}</h1>
+    <p>{{sel_catagory.description}}</p>
+    {% if user_id==sel_catagory.user_id %}
+    <a href="{{url_for('editCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Edit</a>
+    <a href="{{url_for('deleteCatagory',cid=sel_catagory.id)}}" class="btn btn-link" role="button">Delete</a>
+    {% endif %}
+</div>
+<ul class="list-group">
+    {% for product in products %}
+    <li style="list-style: none;">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div style="float:left;margin: 0 10px; width:100px;">
+                    {% if product.image %}
+                    <img src="http://localhost:5000/{{ product.image }}" style="width:100px;height:100px" alt="{{product.name}}">
+                    {% else %}
+                    <img src="http://localhost:5000/static/uploads/default/no_img.jpg" style="width:100px;height:100px" alt="{{product.name}}">
+                    {% endif %}
+                </div>
+                <div style="float:left;margin: 0 10px; width:200px;">
+                    <p><strong>{{product.name}}</strong></p>
+                    <p>{{product.description}}</p>
+                </div>
+                <div style="float:left;margin: 0 10px; width:100px;">
+                    <p><strong>Price</strong></p>
+                    <p>{{product.price}}</p>
+                </div>
+                <div style="float:left;margin: 0 10px; width:100px;">
+                    <p><strong>Flavour</strong></p>
+                    <p>{{product.flavour}}</p>
+                </div>
+                <div style="float:left;margin: 0 10px;">
+                    {% if user_id==product.user_id %}
+                    <a href="{{url_for('editProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Edit</a>
+                    <a href="{{url_for('deleteProduct',cid=sel_catagory.id,pid=product.id)}}" class="btn btn-link" role="button">Delete</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        <!-- /#page-content-wrapper -->
-    </div>
-    <!-- /#wrapper -->
-    
-  </body>
-</html>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

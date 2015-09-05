@@ -1,83 +1,15 @@
-<html>
-  <head>
-    <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
-    <title>Edit Catalog</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='simple-sidebar.css')}}">
-  </head>
-  <body>
-      <div id="wrapper">
-         <!--Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Catalog
-                    </a>
-                </li>
-                <li class="sidebar-brand">
-                    <a href="{{url_for('IndexPage')}}">
-                        Login
-                    </a>
-                </li>
-                {% for catagory in catagories %}
-                <li>
-                    <a href="{{url_for('showProducts',cid=catagory.id)}}">{{catagory.name}}</a>
-                </li>
-                {% endfor %}
-                <li>
-                    <a href="{{url_for('newCatagory')}}">Create new catagory</a>
-                </li>
-                <li>
-                    <a href="{{url_for('newProduct')}}">Create new product</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-          
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        
-                        {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-success">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>{{message}}</strong>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        
-                        <div class="jumbotron">
-                            <h1>Delete Product</h1>
-                        </div>
-                        <form class="form-horizontal" role="form" method="POST" action="{{url_for('deleteProduct',cid=sel_catagory.id,pid=sel_product.id)}}">
-                            <div class="form-group">
-                                <!--<div class="col-sm-offset-2 col-sm-10">-->
-                                <label class="control-label col-sm-2">Confirm delete product <span style="color:#FF0000;">{{sel_product.name}}</span> ?</label>
-                                <button type="submit" class="btn btn-default">Yes</button>
-                                <a href="{{url_for('showProducts',cid=sel_catagory.id)}}" class="btn btn-default">No</a>
-                                <!--</div>-->
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /#page-content-wrapper -->
+{% extends "base.html" %}
+{% block content %} 
+<div class="jumbotron">
+    <h1>Delete Product</h1>
+</div>
+<form class="form-horizontal" role="form" method="POST" action="{{url_for('deleteProduct',cid=sel_catagory.id,pid=sel_product.id)}}">
+    <div class="form-group">
+        <!--<div class="col-sm-offset-2 col-sm-10">-->
+        <label class="control-label col-sm-2">Confirm delete product <span style="color:#FF0000;">{{sel_product.name}}</span> ?</label>
+        <button type="submit" class="btn btn-default">Yes</button>
+        <a href="{{url_for('showProducts',cid=sel_catagory.id)}}" class="btn btn-default">No</a>
+        <!--</div>-->
     </div>
-    <!-- /#wrapper -->
-    <div class="container">
-        
-    </div>  
-  </body>
-</html>
+</form>
+{% endblock %}

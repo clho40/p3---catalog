@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <!--<link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='style.css')}}">-->
+    <title>Catalog</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="txt/css" href="{{url_for('static',filename='simple-sidebar.css')}}">
+    {% block header %}{% endblock %}
+  </head>
+  <body>
+      <!-- TOP NAV BAR -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle"
+                        data-toggle="collapse"
+                        data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{url_for('IndexPage')}}">
+                    Catalog
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" style="width:100%">
+                <ul class="nav navbar-nav" style="float:right;white-space: nowrap;width=100%;">
+                    {% if logged_in %}
+                        <li class="top_li">
+                            <img src="{{picture}}" class="thumbnail">
+                            <a>{{username}}</a>
+                        </li>
+                        <li class="top_li"><a href="{{url_for('disconnect')}}">Logout</a></li>
+                    {% else %}
+                    <li class="top_li"><a href="{{url_for('showLogin')}}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="wrapper">
+        <!--Nav Bar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                {% for catagory in catagories %}
+                <li>
+                    <a href="{{url_for('showProducts',cid=catagory.id)}}">{{catagory.name}}</a>
+                </li>
+                {% endfor %}
+                {% if logged_in %}
+                <li>
+                    <a href="{{url_for('newCatagory')}}">Create new catagory</a>
+                </li>
+                <li>
+                    <a href="{{url_for('newProduct')}}">Create new product</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category,message in messages %}
+                        <div class="alert {{ category }}">
+                            <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{message}}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                                    
+                        <div id="content">
+                            {% block content %} {% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <!-- scripts -->
+    {% block scripts %}{% endblock %}
+    <!-- /#scripts -->
+  </body>
+</html>
