@@ -488,7 +488,7 @@ def JSONGetProductByID(pid):
 if __name__ == '__main__':
     app.secret_key = 'Ae00QqjmTKFlVkgqgRKNtQg5Nk2pm8VQZjdaP+qDtms='
     app.debug = True
-    app.run(host = '0.0.0.0', port = 5000)
+    app.run(host = '0.0.0.0', port = 8000)
 
 
 

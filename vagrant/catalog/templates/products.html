@@ -19,9 +19,9 @@
                 <div style="float:left;margin: 0 10px; width:100px;">
                     <!--If the product has an image, display it, else, display a default "No image" image-->
                     {% if product.image %}
-                    <img src="http://localhost:5000/{{ product.image }}" style="width:100px;height:100px" alt="{{product.name}}">
+                    <img src="http://localhost:8000/{{ product.image }}" style="width:100px;height:100px" alt="{{product.name}}">
                     {% else %}
-                    <img src="http://localhost:5000/static/uploads/default/no_img.jpg" style="width:100px;height:100px" alt="{{product.name}}">
+                    <img src="http://localhost:8000/static/uploads/default/no_img.jpg" style="width:100px;height:100px" alt="{{product.name}}">
                     {% endif %}
                 </div>
                 <div style="float:left;margin: 0 10px; width:200px;">
