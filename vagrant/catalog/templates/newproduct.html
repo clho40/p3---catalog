@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+<!--Page to create new product-->
 {% block content %} 
 <div class="jumbotron">
 <h1>New Product</h1>
 </div>
+<!--New product form-->
 <form class="form-horizontal" role="form" method="POST" action="{{url_for('newProduct')}}" enctype="multipart/form-data">
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Product Name: </label>
@@ -41,10 +43,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2">Image: </label>
         <div class="col-sm-10">
-            <!--<label class="btn btn-default" for="my-file-selector">-->
-                <!--<input id="my-file-selector" name='file' type="file" style="display:none;">-->
                 <input name='file' type="file">
-            <!--</label>-->
         </div>
     </div>
     <div class="form-group"> 

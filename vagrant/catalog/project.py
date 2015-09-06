@@ -1,3 +1,4 @@
+#import all necessary libraries and also the database servce module
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask import session as login_session
 from flask import make_response
@@ -11,51 +12,67 @@ import requests
 import os
 from werkzeug import secure_filename
 
+#define flask application
 app = Flask(__name__)
+
+#define the upload destination
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+#define the allowed uploaded files extensions. Only images!
 app.config['ALLOWED_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
 
+#loads google api client secret - to obtain access to the API
 CLIENT_ID = json.loads(open('client_secrets.json','r').read())['web']['client_id']
 
+#Method to check if the uploaded file is in acceptable image format
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
+#Method to check if user is already logged in
 def CheckUserLoggedIn():
     user_loggedin = False
     if 'username' in login_session:
         user_loggedin = True
     return user_loggedin
 
+#Method to get user's username by checking if user is already logged in
 def getSessionUsername():
     username = ''
     if CheckUserLoggedIn():
         username = login_session['username']
     return username
 
+#Method to get user's user ID by checking if user is already logged in
 def getSessionUserID():
     user_id = ''
     if CheckUserLoggedIn():
         user_id = login_session['user_id']
     return user_id
 
+#Method to get user's picture by checking if user is already logged in
 def getSessionUserPic():
     pic = ''
     if CheckUserLoggedIn():
         pic = login_session['picture']
     return pic
 
+#Homepage - Display 10 latest products
 @app.route('/')
 def IndexPage():
     catagories = database_service.GetAllCatagory()
     logged_in = CheckUserLoggedIn()
     username = getSessionUsername()
     picture = getSessionUserPic()
-    return render_template('index.html',catagories=catagories,logged_in=logged_in,username=username,picture=picture)
+    products = database_service.GetLatestProduct()
+    user_id = getSessionUserID()
+    return render_template('index.html',catagories=catagories,logged_in=logged_in,username=username,picture=picture,products=products,user_id=user_id)
 
+#New Catagory page - A page that contains a form to create a new catagory
 @app.route('/catagory/new', methods=['GET','POST'])
 def newCatagory():
+    #Direct user to login page if not logged in. User must be logged in before creating catagories.
     logged_in = CheckUserLoggedIn()
     if not logged_in:
         return redirect('/login')
@@ -63,15 +80,19 @@ def newCatagory():
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
     if request.method == 'POST':
+        #When user clicks the submit button, create new catagory entry into our database
         user_id=getSessionUserID()
         database_service.NewCatagory(request.form['name'],request.form['desc'],user_id)
         flash('New catagory created!','alert-success')
         return redirect(url_for('newCatagory'))
     else:
+        #When the page loads, load the newcatagory.html page
         return render_template('newcatagory.html',catagories=catagories,logged_in=logged_in,username=username,picture=picture)
 
+#Edit Catagory page - A page that contains a form for user to modify catagory
 @app.route('/catagory/<int:cid>/edit', methods=['GET','POST'])
 def editCatagory(cid):
+    #Direct user to login page if not logged in. User must be logged in before modifying catagories.
     logged_in = CheckUserLoggedIn()
     if not logged_in:
         return redirect('/login')
@@ -79,18 +100,23 @@ def editCatagory(cid):
     user_id=getSessionUserID()
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
+    #Check if the user is the owner of this catagory. Allow user to modify if they are the creator of it.
     if database_service.hasCatagoryPermission(cid,user_id):
         if request.method == 'POST':
+            #When user clicks the submit button, updates catagory information into our database
             database_service.EditCatagory(cid,request.form['name'],request.form['desc'])
             flash('Catagory updated!','alert-success')
             return redirect(url_for('showProducts',cid=cid))
         else:
+            #When the page loads, load the editcatagory.html page
             sel_catagory = database_service.GetCatagoryByID(cid)
             return render_template('editcatagory.html',catagories=catagories,sel_catagory=sel_catagory,logged_in=logged_in,username=username,picture=picture)
     else:
-            flash('No permission to modify this catagory!','alert-danger')
-            return redirect(url_for('showProducts',cid=cid))
+        #User is NOT the owner of this catagory. Show red alert message and redirect back to product page
+        flash('No permission to modify this catagory!','alert-danger')
+        return redirect(url_for('showProducts',cid=cid))
 
+#Delete Catagory page - A confirmation page for user to delete catagory
 @app.route('/catagory/<int:cid>/delete', methods=['GET','POST'])
 def deleteCatagory(cid):
     logged_in = CheckUserLoggedIn()
@@ -100,18 +126,23 @@ def deleteCatagory(cid):
     user_id=getSessionUserID()
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
+    #Check if the user is the owner of this catagory. Allow user to delete if they are the creator of it.
     if database_service.hasCatagoryPermission(cid,user_id):
         if request.method == 'POST':
+            #When user clicks the Yes button, delete the catagory from our database
             database_service.DeleteCatagory(cid)
             flash('Catagory deleted!','alert-success')
             return redirect(url_for('IndexPage'))
         else:
+            #When the page loads, load the deletecatagory.html page
             sel_catagory = database_service.GetCatagoryByID(cid)
             return render_template('deletecatagory.html',catagories=catagories,sel_catagory=sel_catagory,logged_in=logged_in,username=username,picture=picture)
     else:
+        #User is NOT the owner of this catagory. Show red alert message and redirect back to product page
         flash('No permission to delete this catagory!','alert-danger')
         return redirect(url_for('showProducts',cid=cid))
 
+#Display products page - A page to show all the products correspond to the selected catagory
 @app.route('/catagory/<int:cid>')
 def showProducts(cid):
     username = getSessionUsername()
@@ -123,8 +154,10 @@ def showProducts(cid):
     picture = getSessionUserPic()
     return render_template('products.html',catagories=catagories,sel_catagory=sel_catagory, products=products,logged_in=logged_in,username=username,user_id=user_id,picture=picture)
 
+#New Product page - A page that contains a form to create a new product
 @app.route('/product/new', methods=['GET','POST'])
 def newProduct():
+    #Direct user to login page if not logged in. User must be logged in before creating products.
     logged_in = CheckUserLoggedIn()
     if not logged_in:
         return redirect('/login')
@@ -132,12 +165,16 @@ def newProduct():
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
     if request.method == 'POST':
+        #When user clicks the submit button
+        #get the uploaded image information
         pic_path = ''
         file = request.files['file']
         if file and allowed_file(file.filename):
+            #if there are image uploaded, save into /static/uploads
             filename = secure_filename(file.filename)
             pic_path = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             file.save(pic_path)
+        #create the new product entry into our database
         user_id = getSessionUserID()
         database_service.NewProduct(request.form['name'],request.form['desc'],request.form['price'],request.form['flavour'],pic_path,request.form['catagory'],user_id)
         flash('New product created!','alert-success')
@@ -145,8 +182,10 @@ def newProduct():
     else:
         return render_template('newproduct.html',catagories=catagories,logged_in=logged_in,username=username,picture=picture)
 
+#Edit Product page - A page that contains a form for user to modify products
 @app.route('/catagory/<int:cid>/product/<int:pid>/edit', methods=['GET','POST'])
 def editProduct(cid,pid):
+    #Direct user to login page if not logged in. User must be logged in before modifying products.
     logged_in = CheckUserLoggedIn()
     if not logged_in:
         return redirect('/login')
@@ -154,9 +193,19 @@ def editProduct(cid,pid):
     user_id=getSessionUserID()
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
+    #Check if the user is the owner of this catagory. Allow user to modify if they are the creator of it.
     if database_service.hasProductPermission(pid,user_id):
         if request.method == 'POST':
-            database_service.EditProduct(pid,request.form['name'],request.form['desc'],request.form['price'],request.form['flavour'],request.form['catagory'])
+            #When user clicks the submit button
+            pic_path = ''
+            file = request.files['file']
+            if file and allowed_file(file.filename):
+                #if there are new image uploaded, save into /static/uploads
+                filename = secure_filename(file.filename)
+                pic_path = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+                file.save(pic_path)
+            #update the modified product detail into our database
+            database_service.EditProduct(pid,request.form['name'],request.form['desc'],request.form['price'],request.form['flavour'],pic_path,request.form['catagory'])
             flash('Product updated!','alert-success')
             return redirect(url_for('showProducts',cid=cid))
         else:
@@ -164,11 +213,14 @@ def editProduct(cid,pid):
             sel_product = database_service.GetProductByID(pid)
             return render_template('editproduct.html',catagories=catagories,sel_catagory=sel_catagory, sel_product=sel_product,logged_in=logged_in,username=username,picture=picture)
     else:
+        #User is NOT the owner of this product. Show red alert message and redirect back to product page
         flash('No permission to modify this product!','alert-danger')
         return redirect(url_for('showProducts',cid=cid))
 
+#Delete Product page - A confirmation page for user to delete products
 @app.route('/catagory/<int:cid>/product/<int:pid>/delete', methods=['GET','POST'])
 def deleteProduct(cid,pid):
+    #Check if the user is the owner of this product. Allow user to delete if they are the creator of it.
     logged_in = CheckUserLoggedIn()
     if not logged_in:
         return redirect('/login')
@@ -176,8 +228,10 @@ def deleteProduct(cid,pid):
     user_id=getSessionUserID()
     catagories = database_service.GetAllCatagory()
     picture = getSessionUserPic()
+    #Check if the user is the owner of this product. Allow user to delete if they are the creator of it.
     if database_service.hasProductPermission(pid,user_id):
         if request.method == 'POST':
+            #When user clicks the Yes button, delete the product along with it's image from our database
             database_service.DeleteProduct(pid)
             flash('Product deleted!','alert-success')
             return redirect(url_for('showProducts',cid=cid))
@@ -189,10 +243,7 @@ def deleteProduct(cid,pid):
         flash('No permission to delete this product!','alert-danger')
         return redirect(url_for('showProducts',cid=cid))
 
-@app.route('/sidebar')
-def sidebar():
-    return render_template('sidebar.html')
-
+#Show login page when user clicks Login button
 @app.route('/login')
 def showLogin():
     logged_in = CheckUserLoggedIn()
@@ -202,10 +253,12 @@ def showLogin():
         flash('You are already logged in as %s' %username,'alert-success')
         return redirect(url_for('IndexPage'))
     catagories = database_service.GetAllCatagory()
+    #Generate state key
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html',catagories=catagories, STATE=state,picture=picture)
 
+#login using google plus account
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -281,6 +334,7 @@ def gconnect():
     print "done!"
     return output
 
+#disconnect(Logout) google plus account
 @app.route("/gdisconnect")
 def gdisconnect():
     credentials = login_session.get('credentials')
@@ -299,16 +353,13 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        flash('Successfully Disconnected','alert-success')
-        #response = make_response(json.dumps('Successfully disconnected'),200)
-        #response.headers['Content-Type'] = 'application/json'
+        flash('Successfully Logout','alert-success')
         return redirect(url_for('IndexPage'))
     else:
         flash('Failed to revoke token for given user.','alert-danger')
-        #response = make_response(json.dumps('Failed to revoke token for given user.'),400)
-        #response.headers['Content-Type'] = 'application/json'
         return redirect(url_for('IndexPage'))
 
+#Login using facebook account
 @app.route("/fbconnect", methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -371,6 +422,7 @@ def fbconnect():
     flash("Now logged in as %s" % login_session['username'], 'alert-success')
     return output
 
+#Disconnect(Logout) from facebook account
 @app.route("/fbdisconnect", methods=['POST'])
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
@@ -387,6 +439,7 @@ def fbdisconnect():
     #response.headers['Content-Type'] = 'application/json'
     return redirect(url_for('IndexPage'))
 
+#Fired when Logout button is clicked. Check which provider user used to login and perform disconnect
 @app.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
@@ -396,11 +449,46 @@ def disconnect():
             fbdisconnect()
     return redirect(url_for('IndexPage'))
 
+#Get user thumbnail picture
 def getThumbnail():
     if 'picture' in login_session:
         return login_session['picture']
+    
+#JSON API END POINT
+#Get all catalog catagories
+@app.route('/catagory/all/JSON')
+def JSONGetAllCatagory():
+    json = database_service.GetAllCatagoryJSON()
+    return json
 
+#Get catalog by catalog id
+@app.route('/catagory/<int:cid>/JSON')
+def JSONGetCatagoryByID(cid):
+    json = database_service.GetCatagorybyIDJSON(cid)
+    return json
+
+#Get all products
+@app.route('/product/all/JSON')
+def JSONGetAllProducts():
+    json = database_service.GetAllProductsJSON()
+    return json
+
+#Get product by catagory
+@app.route('/catagory/<int:cid>/product/all/JSON')
+def JSONGetProductbyCatagory(cid):
+    json = database_service.GetProductbyCatagoryJSON(cid)
+    return json
+
+#Get product by product id
+@app.route('/product/<int:pid>/JSON')
+def JSONGetProductByID(pid):
+    json = database_service.GetProductbyIDJSON(pid)
+    return json
+    
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
+    app.secret_key = 'Ae00QqjmTKFlVkgqgRKNtQg5Nk2pm8VQZjdaP+qDtms='
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
+
+
+

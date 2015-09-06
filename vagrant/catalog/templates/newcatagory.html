@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+<!--Page to create new catagory-->
 {% block content %} 
 <div class="jumbotron">
 <h1>New Catagory</h1>
 </div>
+<!--New catagory form-->
 <form class="form-horizontal" role="form" method="POST" action="{{url_for('newCatagory')}}">
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Catagory Name: </label>

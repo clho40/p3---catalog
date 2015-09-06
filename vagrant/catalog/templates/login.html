@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+<!--Login page-->
 {% block header %}
+<!--Attach google api javascript-->
 <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
 {% endblock %}
-
+<!--Login form content-->
 {% block content %} 
 <h1> Login </h1>
+<!--Login using google plus account-->
 <div id="signinButton">
     <span class="g-signin"
         data-scope="openid email"
@@ -15,11 +18,12 @@
         data-callback="signInCallback"
         data-approvalprompt="force">
     </span></br>
+    <!--Login using facebook account-->
     <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
         <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
     </fb:login-button>
 </div>
-
+<!--Division to display login result-->
 <div id="result">
     
 </div>

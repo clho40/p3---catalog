@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+<!--Content for edit catagory-->
 {% block content %} 
 <div class="jumbotron">
     <h1>Edit Catagory</h1>
 </div>
+<!--Catagory edit / modification form-->
 <form class="form-horizontal" role="form" method="POST" action="{{url_for('editCatagory',cid=sel_catagory.id)}}">
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Catagory Name: </label>

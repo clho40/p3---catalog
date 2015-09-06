@@ -6,6 +6,7 @@
 
 /* Toggle Styles */
 
+/* Custom Functions - for the User photo thumbnail and top navigation menu */
 .thumbnail {
     margin-top: 10;
     width: 30px; 
@@ -32,7 +33,7 @@
     display:inline-block;
     padding: 0;
 }
-
+/* End Custom Function */
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
