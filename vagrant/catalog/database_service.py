@@ -138,6 +138,8 @@ def hasProductPermission(pid,p_user_id):
         return False
 
 #API Endpoint Methods
+
+#JSON
 #Method to get all catagories
 def GetAllCatagoryJSON():
     try:
@@ -192,3 +194,71 @@ def GetProductbyIDJSON(pid):
             return jsonify(Product='')
     except:
         return jsonify(Product='')
+
+#XML
+#Method to get all catagories
+def GetAllCatagoryXML():
+    catagory = GetAllCatagory()
+    xml = parseCatagoryXML(catagory)
+    return xml     
+
+#Method to get specified catagories
+def GetCatagorybyIDXML(cid):
+    catagory = GetCatagoryByID(cid)
+    xml = parseCatagoryXML(catagory)
+    return xml
+
+#Method to get all products
+def GetAllProductsXML():
+    products = GetAllProducts()
+    xml = parseProductXML(products)
+    return xml
+
+#Method to get product by catagory
+def GetProductbyCatagoryXML(cid):
+    products = GetProductByCatagory(cid)
+    xml = parseProductXML(products)
+    return xml
+
+#Method to get product by product id
+def GetProductbyIDXML(pid):
+    product = GetProductByID(pid)
+    xml = parseProductXML(product)
+    return xml
+
+#Method to parse catagory to XML format
+def parseCatagoryXML(catagory):
+    xml = ''
+    xml += '<Catalog>'
+    for item in catagory:
+        xml += '<catagory>'
+        xml += '<id>%s</id>' %item.id
+        xml += '<name>%s</name>' %item.name
+        xml += '<description>%s</description>' %item.description
+        xml += '<updated_on>%s</updated_on>' %item.updated_on
+        xml += '<created_on>%s</created_on>' %item.created_on
+        xml += '<created_by>%s</created_by>' %item.user.name
+        xml += '</catagory>'
+    xml += '</Catalog>'
+    return xml
+
+#Method to parse product to XML format
+def parseProductXML(products):
+    xml = ''
+    xml += '<Catalog>'
+    for item in products:
+        xml += '<product>'
+        xml += '<id>%s</id>' %item.id
+        xml += '<name>%s</name>' %item.name
+        xml += '<description>%s</description>' %item.description
+        xml += '<price>%s</price>' %item.price
+        xml += '<flavour>%s</flavour>' %item.flavour
+        xml += '<catagory_id>%s</catagory_id>' %item.catagory.id
+        xml += '<catagory>%s</catagory>' %item.catagory.name
+        xml += '<updated_on>%s</updated_on>' %item.updated_on
+        xml += '<created_on>%s</created_on>' %item.created_on
+        xml += '<created_by>%s</created_by>' %item.user.name
+        xml += '</product>'
+    xml += '</Catalog>'
+    return xml
+    

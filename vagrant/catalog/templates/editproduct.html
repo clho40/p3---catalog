@@ -5,7 +5,7 @@
     <h1>Edit Product</h1>
 </div>
 <!--Product edit / modification form-->
-<form class="form-horizontal" role="form" method="POST" action="{{url_for('editProduct',cid=sel_catagory.id, pid=sel_product.id)}}">
+<form class="form-horizontal" role="form" method="POST" action="{{url_for('editProduct',cid=sel_catagory.id, pid=sel_product.id)}}" enctype="multipart/form-data">
     <div class="form-group">
         <label class="control-label col-sm-2" for="name">Product Name: </label>
         <div class="col-sm-10">

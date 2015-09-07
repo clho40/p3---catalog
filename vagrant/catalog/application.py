@@ -11,9 +11,13 @@ import database_service
 import requests
 import os
 from werkzeug import secure_filename
+from flask.ext.seasurf import SeaSurf
 
 #define flask application
 app = Flask(__name__)
+
+#Cross-Site request forgery implementation
+csrf = SeaSurf(app)
 
 #define the upload destination
 UPLOAD_FOLDER = 'static/uploads'
@@ -454,7 +458,9 @@ def getThumbnail():
     if 'picture' in login_session:
         return login_session['picture']
     
-#JSON API END POINT
+#API END POINT
+
+#JSON
 #Get all catalog catagories
 @app.route('/catagory/all/JSON')
 def JSONGetAllCatagory():
@@ -484,6 +490,37 @@ def JSONGetProductbyCatagory(cid):
 def JSONGetProductByID(pid):
     json = database_service.GetProductbyIDJSON(pid)
     return json
+
+#XML
+#Get all catalog catagories
+@app.route('/catagory/all/XML')
+def XMLGetAllCatagory():
+    xml = database_service.GetAllCatagoryXML()
+    return xml
+
+#Get catalog by catalog id
+@app.route('/catagory/<int:cid>/XML')
+def XMLGetCatagoryByID(cid):
+    xml = database_service.GetCatagorybyIDXML(cid)
+    return xml
+
+#Get all products
+@app.route('/product/all/XML')
+def XMLGetAllProducts():
+    xml = database_service.GetAllProductsXML()
+    return xml
+
+#Get product by catagory
+@app.route('/catagory/<int:cid>/product/all/XML')
+def XMLGetProductbyCatagory(cid):
+    xml = database_service.GetProductbyCatagoryXML(cid)
+    return xml
+
+#Get product by product id
+@app.route('/product/<int:pid>/XML')
+def XMLGetProductByID(pid):
+    xml = database_service.GetProductbyIDXML(pid)
+    return xml
     
 if __name__ == '__main__':
     app.secret_key = 'Ae00QqjmTKFlVkgqgRKNtQg5Nk2pm8VQZjdaP+qDtms='
