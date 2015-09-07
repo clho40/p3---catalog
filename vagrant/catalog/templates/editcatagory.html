@@ -20,6 +20,7 @@
     </div>
     <div class="form-group"> 
         <div class="col-sm-offset-2 col-sm-10">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn btn-default">Submit</button>
         <a href="{{url_for('showProducts',cid=sel_catagory.id)}}" class="btn btn-default">Cancel</a>
         </div>

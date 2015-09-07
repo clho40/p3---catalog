@@ -199,65 +199,90 @@ def GetProductbyIDJSON(pid):
 #Method to get all catagories
 def GetAllCatagoryXML():
     catagory = GetAllCatagory()
-    xml = parseCatagoryXML(catagory)
+    xml = parseCatagoryXML(catagory,'ALL')
+    print xml
     return xml     
 
 #Method to get specified catagories
 def GetCatagorybyIDXML(cid):
     catagory = GetCatagoryByID(cid)
-    xml = parseCatagoryXML(catagory)
+    xml = parseCatagoryXML(catagory,'ONE')
     return xml
 
 #Method to get all products
 def GetAllProductsXML():
     products = GetAllProducts()
-    xml = parseProductXML(products)
+    xml = parseProductXML(products,'ALL')
     return xml
 
 #Method to get product by catagory
 def GetProductbyCatagoryXML(cid):
-    products = GetProductByCatagory(cid)
+    products = GetProductByCatagory(cid,'ALL')
     xml = parseProductXML(products)
     return xml
 
 #Method to get product by product id
 def GetProductbyIDXML(pid):
-    product = GetProductByID(pid)
+    product = GetProductByID(pid,'ONE')
     xml = parseProductXML(product)
     return xml
 
 #Method to parse catagory to XML format
-def parseCatagoryXML(catagory):
+def parseCatagoryXML(catagory,query_type):
     xml = ''
     xml += '<Catalog>'
-    for item in catagory:
+    if query_type == 'ALL':
+        for item in catagory:
+            xml += '<catagory>'
+            xml += '<id>%s</id>' %item.id
+            xml += '<name>%s</name>' %item.name
+            xml += '<description>%s</description>' %item.description
+            xml += '<updated_on>%s</updated_on>' %item.updated_on
+            xml += '<created_on>%s</created_on>' %item.created_on
+            xml += '<created_by>%s</created_by>' %item.user.name
+            xml += '</catagory>'
+    else:
         xml += '<catagory>'
-        xml += '<id>%s</id>' %item.id
-        xml += '<name>%s</name>' %item.name
-        xml += '<description>%s</description>' %item.description
-        xml += '<updated_on>%s</updated_on>' %item.updated_on
-        xml += '<created_on>%s</created_on>' %item.created_on
-        xml += '<created_by>%s</created_by>' %item.user.name
+        xml += '<id>%s</id>' %catagory.id
+        xml += '<name>%s</name>' %catagory.name
+        xml += '<description>%s</description>' %catagory.description
+        xml += '<updated_on>%s</updated_on>' %catagory.updated_on
+        xml += '<created_on>%s</created_on>' %catagory.created_on
+        xml += '<created_by>%s</created_by>' %catagory.user.name
         xml += '</catagory>'
     xml += '</Catalog>'
     return xml
 
 #Method to parse product to XML format
-def parseProductXML(products):
+def parseProductXML(products,query_type):
     xml = ''
     xml += '<Catalog>'
-    for item in products:
+    if query_type == 'ALL':
+        for item in products:
+            xml += '<product>'
+            xml += '<id>%s</id>' %item.id
+            xml += '<name>%s</name>' %item.name
+            xml += '<description>%s</description>' %item.description
+            xml += '<price>%s</price>' %item.price
+            xml += '<flavour>%s</flavour>' %item.flavour
+            xml += '<catagory_id>%s</catagory_id>' %item.catagory.id
+            xml += '<catagory>%s</catagory>' %item.catagory.name
+            xml += '<updated_on>%s</updated_on>' %item.updated_on
+            xml += '<created_on>%s</created_on>' %item.created_on
+            xml += '<created_by>%s</created_by>' %item.user.name
+            xml += '</product>'
+    else:
         xml += '<product>'
-        xml += '<id>%s</id>' %item.id
-        xml += '<name>%s</name>' %item.name
-        xml += '<description>%s</description>' %item.description
-        xml += '<price>%s</price>' %item.price
-        xml += '<flavour>%s</flavour>' %item.flavour
-        xml += '<catagory_id>%s</catagory_id>' %item.catagory.id
-        xml += '<catagory>%s</catagory>' %item.catagory.name
-        xml += '<updated_on>%s</updated_on>' %item.updated_on
-        xml += '<created_on>%s</created_on>' %item.created_on
-        xml += '<created_by>%s</created_by>' %item.user.name
+        xml += '<id>%s</id>' %products.id
+        xml += '<name>%s</name>' %products.name
+        xml += '<description>%s</description>' %products.description
+        xml += '<price>%s</price>' %products.price
+        xml += '<flavour>%s</flavour>' %products.flavour
+        xml += '<catagory_id>%s</catagory_id>' %products.catagory.id
+        xml += '<catagory>%s</catagory>' %products.catagory.name
+        xml += '<updated_on>%s</updated_on>' %products.updated_on
+        xml += '<created_on>%s</created_on>' %products.created_on
+        xml += '<created_by>%s</created_by>' %products.user.name
         xml += '</product>'
     xml += '</Catalog>'
     return xml

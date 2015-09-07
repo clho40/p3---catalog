@@ -63,6 +63,7 @@ def getSessionUserPic():
     return pic
 
 #Homepage - Display 10 latest products
+@csrf.exempt
 @app.route('/')
 def IndexPage():
     catagories = database_service.GetAllCatagory()
@@ -147,6 +148,7 @@ def deleteCatagory(cid):
         return redirect(url_for('showProducts',cid=cid))
 
 #Display products page - A page to show all the products correspond to the selected catagory
+@csrf.exempt
 @app.route('/catagory/<int:cid>')
 def showProducts(cid):
     username = getSessionUsername()
@@ -248,6 +250,7 @@ def deleteProduct(cid,pid):
         return redirect(url_for('showProducts',cid=cid))
 
 #Show login page when user clicks Login button
+@csrf.exempt
 @app.route('/login')
 def showLogin():
     logged_in = CheckUserLoggedIn()
@@ -263,6 +266,7 @@ def showLogin():
     return render_template('login.html',catagories=catagories, STATE=state,picture=picture)
 
 #login using google plus account
+@csrf.exempt
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -339,6 +343,7 @@ def gconnect():
     return output
 
 #disconnect(Logout) google plus account
+@csrf.exempt
 @app.route("/gdisconnect")
 def gdisconnect():
     credentials = login_session.get('credentials')
@@ -364,6 +369,7 @@ def gdisconnect():
         return redirect(url_for('IndexPage'))
 
 #Login using facebook account
+@csrf.exempt
 @app.route("/fbconnect", methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -427,6 +433,7 @@ def fbconnect():
     return output
 
 #Disconnect(Logout) from facebook account
+@csrf.exempt
 @app.route("/fbdisconnect", methods=['POST'])
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
@@ -445,6 +452,7 @@ def fbdisconnect():
 
 #Fired when Logout button is clicked. Check which provider user used to login and perform disconnect
 @app.route('/disconnect')
+@csrf.exempt
 def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
@@ -496,31 +504,41 @@ def JSONGetProductByID(pid):
 @app.route('/catagory/all/XML')
 def XMLGetAllCatagory():
     xml = database_service.GetAllCatagoryXML()
-    return xml
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 #Get catalog by catalog id
 @app.route('/catagory/<int:cid>/XML')
 def XMLGetCatagoryByID(cid):
     xml = database_service.GetCatagorybyIDXML(cid)
-    return xml
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 #Get all products
 @app.route('/product/all/XML')
 def XMLGetAllProducts():
     xml = database_service.GetAllProductsXML()
-    return xml
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 #Get product by catagory
 @app.route('/catagory/<int:cid>/product/all/XML')
 def XMLGetProductbyCatagory(cid):
     xml = database_service.GetProductbyCatagoryXML(cid)
-    return xml
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 #Get product by product id
 @app.route('/product/<int:pid>/XML')
 def XMLGetProductByID(pid):
     xml = database_service.GetProductbyIDXML(pid)
-    return xml
+    response = make_response(xml)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
     
 if __name__ == '__main__':
     app.secret_key = 'Ae00QqjmTKFlVkgqgRKNtQg5Nk2pm8VQZjdaP+qDtms='
